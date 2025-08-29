@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Aura Handcrafts — Catalog</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 20px;
+      background: #f7f7f7;
+    }
+    h2 { margin-top: 40px; }
+    .catalog, .related, .recently {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      text-align: center;
+      cursor: pointer;
+    }
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    #productDetail {
+      margin-top: 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      display: none;
+    }
+    #productDetail img {
+      width: 300px;
+      border-radius: 12px;
+    }
+    .close-btn {
+      float: right;
+      cursor: pointer;
+      font-size: 20px;
+      color: red;
+    }
+    .order-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #25D366;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Aura Handcrafts — Products</h1>
+  <div class="catalog" id="catalog"></div>
+
+  <div id="productDetail">
+    <span class="close-btn" onclick="closeDetail()">✖</span>
+    <h2 id="detailName"></h2>
+    <img id="detailImg" src="" alt="">
+    <p id="detailDesc"></p>
+    <p><strong>Price:</strong> ₹<span id="detailPrice"></span></p>
+    <a id="whatsappBtn" class="order-btn" target="_blank">Order via WhatsApp</a>
+
+    <h3>Related Products</h3>
+    <div class="related" id="relatedProducts"></div>
+
+    <h3>Recently Viewed</h3>
+    <div class="recently" id="recentlyViewed"></div>
+  </div>
+
+  <script>
+    const products = [
+      {id:1, name:"3-inch Agate Resin Keychain", price:250, category:"keychain", img:"2 inch name agate keychain.jpeg", desc:"Handmade 2-inch agate resin keychain."},
+      {id:2, name:"3-inch Round Resin Keychain", price:230, category:"keychain", img:"3 inch keychain.jpg", desc:"Handmade 3-inch round resin keychain."},
+      {id:3, name:"Resin Bookmark", price:150, category:"bookmark", img:"https://via.placeholder.com/300x200?text=Bookmark", desc:"Elegant resin bookmark with gold flakes."},
+      {id:4, name:"Resin Coaster", price:400, category:"coaster", img:"https://via.placeholder.com/300x200?text=Coaster", desc:"Beautiful resin coaster with glossy finish."},
+      {id:5, name:"Flower Resin Keychain", price:260, category:"keychain", img:"https://via.placeholder.com/300x200?text=Flower+Keychain", desc:"Floral design resin keychain."},
+      {id:6, name:"Ocean Resin Keychain", price:280, category:"keychain", img:"https://via.placeholder.com/300x200?text=Ocean+Keychain", desc:"Ocean theme resin keychain."}
+    ];
+
+    const catalog = document.getElementById("catalog");
+    const detail = document.getElementById("productDetail");
+
+    function loadCatalog(){
+      catalog.innerHTML = "";
+      products.forEach(p=>{
+        catalog.innerHTML += `
+          <div class="card" onclick="showDetail(${p.id})">
+            <img src="${p.img}" alt="${p.name}">
+            <h4>${p.name}</h4>
+            <p>₹${p.price}</p>
+          </div>`;
+      });
+    }
+
+    function showDetail(id){
+      const p = products.find(x=>x.id===id);
+      document.getElementById("detailName").innerText = p.name;
+      document.getElementById("detailImg").src = p.img;
+      document.getElementById("detailDesc").innerText = p.desc;
+      document.getElementById("detailPrice").innerText = p.price;
+      document.getElementById("whatsappBtn").href = `https://wa.me/919876543210?text=Hi, I’d like to order ${encodeURIComponent(p.name)}.`;
+
+      // Related
+      const related = products.filter(x=>x.category===p.category && x.id!==p.id).slice(0,4);
+      document.getElementById("relatedProducts").innerHTML = related.map(r=>`
+        <div class="card" onclick="showDetail(${r.id})">
+          <img src="${r.img}" alt="${r.name}">
+          <h4>${r.name}</h4>
+        </div>`).join("");
+
+      // Recently viewed
+      let rv = JSON.parse(localStorage.getItem("recently")) || [];
+      rv = [p.id, ...rv.filter(x=>x!==p.id)].slice(0,4);
+      localStorage.setItem("recently", JSON.stringify(rv));
+      document.getElementById("recentlyViewed").innerHTML = rv.map(id=>{
+        const prod = products.find(x=>x.id===id);
+        return `<div class="card" onclick="showDetail(${prod.id})">
+          <img src="${prod.img}" alt="${prod.name}">
+          <h4>${prod.name}</h4>
+        </div>`;
+      }).join("");
+
+      detail.style.display = "block";
+      window.scrollTo({ top: detail.offsetTop, behavior: "smooth" });
+    }
+
+    function closeDetail(){
+      detail.style.display = "none";
+    }
+
+    loadCatalog();
+  </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup - Aura Handcrafts</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #fdfdfd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      width: 350px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #e89ab0;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #e89ab0;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #d47892;
+    }
+    .otp-section {
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Signup</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="sendOTP()">Generate OTP</button>
+
+    <div class="otp-section" id="otpSection">
+      <input type="text" id="otpInput" placeholder="Enter OTP">
+      <button onclick="verifyOTP()">Verify OTP</button>
+      <p id="otpMsg"></p>
+    </div>
+  </div>
+
+  <script>
+    let generatedOTP;
+
+    function sendOTP() {
+      const email = document.getElementById("email").value;
+      if (email === "") {
+        alert("Please enter an email!");
+        return;
+      }
+       const gmailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+      if (!gmailPattern.test(email)) {
+        alert("Please enter a valid Gmail Id.");
+        return false;
+      }
+      generatedOTP = Math.floor(1000 + Math.random() * 9000); // 4-digit OTP
+      alert("OTP sent to " + email + ": " + generatedOTP); // Demo purpose only
+      document.getElementById("otpSection").style.display = "block";
+    }
+
+    function verifyOTP() {
+      const otpInput = document.getElementById("otpInput").value;
+      const otpMsg = document.getElementById("otpMsg");
+
+      if (otpInput == generatedOTP) {
+        otpMsg.style.color = "green";
+        otpMsg.innerText = "✅ Email Verified Successfully!";
+      } else {
+        otpMsg.style.color = "red";
+        otpMsg.innerText = "❌ Invalid OTP. Try again.";
+      }
+    }
+  </script>
+</body>
+</html>
